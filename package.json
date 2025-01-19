@@ -1,0 +1,19 @@
+{
+  "name": "noar",
+  "version": "1.0.0",
+  "description": "Test proj for nimap infotech",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amaansiddiq/noar.git"
+  },
+  "author": "Mohammad Amaan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Amaansiddiq/noar/issues"
+  },
+  "homepage": "https://github.com/Amaansiddiq/noar#readme"
+}
