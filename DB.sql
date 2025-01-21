@@ -1,2 +1,0 @@
-DESCRIBE categories	
-DESCRIBE products	
