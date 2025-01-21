@@ -16,9 +16,9 @@
 
 <body>
   <div class="container mt-5">
-  <h1 class="mb-4">Product Management</h1>
+    <h1 class="mb-4">Product Management</h1>
 
-  <h3>Add New Product</h3>
+    <h3>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h3>
     <form (ngSubmit)="onSubmit()" class="mb-4">
       <div class="mb-3">
         <label for="productName" class="form-label">Product Name</label>
@@ -30,15 +30,15 @@
           <option *ngFor="let category of categories" [value]="category.category_id">{{ category.category_name }}</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Add Product</button>
+      <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update Product' : 'Add Product' }}</button>
       <p *ngIf="productError" class="error">{{ productError }}</p>
     </form>
-
 
     <h3>Product List</h3>
     <table id="productTable" class="table table-striped">
       <thead>
         <tr>
+          <th>#</th>
           <th>Product ID</th>
           <th>Product Name</th>
           <th>Category Name</th>
@@ -47,12 +47,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let product of products">
+        <tr *ngFor="let product of products,let i = index">
+          <td>{{ i + (currentPage - 1) * pageSize + 1 }}</td> 
           <td>{{ product.product_id }}</td>
           <td>{{ product.product_name }}</td>
           <td>{{ product.categoryName || 'Unknown' }}</td>
           <td>{{ product.category_id || 'Unknown' }}</td>
           <td>
+            <button (click)="editProduct(product)" class="btn btn-warning btn-sm">Edit</button>
             <button (click)="deleteProduct(product.product_id)" class="btn btn-danger btn-sm">Delete</button>
           </td>
         </tr>

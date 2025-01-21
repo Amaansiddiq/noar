@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef,NgZone  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
+
 interface Product {
   product_id: number;
   product_name: string;
@@ -25,8 +26,9 @@ export class ProductMasterComponent implements OnInit {
   backendUrl = 'http://localhost:3000';
   products: Product[] = [];
   categories: Category[] = [];
-  newProduct = { product_name: '', category_id: null };
+  newProduct: Product = { product_id: 0, product_name: '', category_id: 0, categoryName: '' };
   productError: string = '';
+  isEditMode = false;
   currentPage = 1;
   pageSize = 10;
   totalProducts = 0;
@@ -73,7 +75,7 @@ export class ProductMasterComponent implements OnInit {
       next: (data) => {
         this.totalProducts = data.count;
         this.ngZone.run(() => {
-          this.cdr.detectChanges(); 
+          this.cdr.detectChanges();
         });
       },
       error: (err) => {
@@ -83,29 +85,60 @@ export class ProductMasterComponent implements OnInit {
   }
 
   onSubmit() {
-    const { product_name, category_id } = this.newProduct;
+    const { product_name, category_id, product_id } = this.newProduct;
+
     if (!product_name || !category_id) {
       this.productError = 'Both product name and category must be selected!';
       return;
     } else {
-      this.productError = ''; 
+      this.productError = '';
     }
 
-    this.http.post(`${this.backendUrl}/products`, { product_name, category_id }).pipe(
-      switchMap(() => {
-        return this.http.get<any>(`${this.backendUrl}/products?page=${this.currentPage}&pageSize=${this.pageSize}`);
-      })
-    ).subscribe({
-      next: (data) => {
-        this.products = Array.isArray(data) ? data : data.products || [];
-        this.totalPages = data.totalPages;
-        this.fetchProductCount(); 
-        this.newProduct = { product_name: '', category_id: null }; 
-      },
-      error: (err) => {
-        console.error('Error adding product:', err);
-      }
-    });
+    if (this.isEditMode) {
+      // Update product
+      this.http.put(`${this.backendUrl}/products/${product_id}`, { product_name, category_id }).pipe(
+        switchMap(() => {
+          return this.http.get<any>(`${this.backendUrl}/products?page=${this.currentPage}&pageSize=${this.pageSize}`);
+        })
+      ).subscribe({
+        next: (data) => {
+          this.products = Array.isArray(data) ? data : data.products || [];
+          this.totalPages = data.totalPages;
+          this.fetchProductCount();
+          this.resetForm();
+        },
+        error: (err) => {
+          console.error('Error updating product:', err);
+        }
+      });
+    } else {
+      // Add new product
+      this.http.post(`${this.backendUrl}/products`, { product_name, category_id }).pipe(
+        switchMap(() => {
+          return this.http.get<any>(`${this.backendUrl}/products?page=${this.currentPage}&pageSize=${this.pageSize}`);
+        })
+      ).subscribe({
+        next: (data) => {
+          this.products = Array.isArray(data) ? data : data.products || [];
+          this.totalPages = data.totalPages;
+          this.fetchProductCount();
+          this.resetForm();
+        },
+        error: (err) => {
+          console.error('Error adding product:', err);
+        }
+      });
+    }
+  }
+
+  resetForm() {
+    this.newProduct = { product_id: 0, product_name: '', category_id: 0, categoryName: '' };
+    this.isEditMode = false;
+  }
+
+  editProduct(product: Product) {
+    this.newProduct = { ...product };
+    this.isEditMode = true;
   }
 
   deleteProduct(productId: number) {
@@ -117,7 +150,7 @@ export class ProductMasterComponent implements OnInit {
       next: (data) => {
         this.products = Array.isArray(data) ? data : data.products || [];
         this.totalPages = data.totalPages;
-        this.fetchProductCount(); 
+        this.fetchProductCount();
       },
       error: (err) => {
         console.error('Error deleting product:', err);
@@ -128,10 +161,11 @@ export class ProductMasterComponent implements OnInit {
   goToPage(page: number) {
     if (page > 0 && page <= this.totalPages) {
       this.currentPage = page;
-      this.fetchProducts();  
+      this.fetchProducts();
     }
   }
-    getTotalPages() {
+
+  getTotalPages() {
     return Math.ceil(this.totalProducts / this.pageSize);
   }
 }

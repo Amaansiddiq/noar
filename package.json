@@ -1,7 +1,7 @@
 {
   "name": "noar",
   "version": "1.0.0",
-  "description": "Test proj for nimap infotech",
+  "description": "CRUD Node + Angular 19 + MySQL CRUD Project",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,0 +1,52 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Category Master</h1>
+
+  <form (ngSubmit)="addCategory()" class="mb-3">
+      <div class="input-group">
+          <input type="text" [(ngModel)]="categoryName" name="categoryName" class="form-control" placeholder="Enter category name" required>
+          <button type="submit" class="btn btn-primary">Add Category</button>
+      </div>
+  </form>
+
+  <table class="table table-bordered table-striped">
+      <thead class="table-light">
+          <tr>
+              <th>#</th>
+              <th>Category Name</th>
+              <th>Category Id</th>
+              <th>Actions</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let category of categories; let i = index">
+              <td>{{ i + 1 }}</td>
+
+              <td *ngIf="categoryToEdit !== category.category_id">
+                  {{ category.category_name }}
+              </td>
+              <td *ngIf="categoryToEdit === category.category_id">
+                  <input 
+                      type="text" 
+                      [(ngModel)]="updatedCategoryName" 
+                      class="form-control" 
+                      placeholder="Enter new category name" 
+                      required>
+              </td>
+
+              <td>{{ category.category_id }}</td>
+
+              <td>
+                  <button *ngIf="categoryToEdit !== category.category_id" class="btn btn-sm btn-warning" (click)="editCategory(category)">
+                      Edit
+                  </button>
+                  <button *ngIf="categoryToEdit === category.category_id" class="btn btn-sm btn-success" (click)="saveCategory(category.category_id)">
+                      Save
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteCategory(category.category_id)">
+                      Delete
+                  </button>
+              </td>
+          </tr>
+      </tbody>
+  </table>
+</div>

@@ -4,8 +4,9 @@ import { provideRouter } from '@angular/router';
 import { CommonModule } from '@angular/common';  
 import { RouterModule } from '@angular/router';
 import { routes } from './app.routes';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {  HttpClientModule } from '@angular/common/http';
 import { RouterOutlet } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,7 @@ export class AppComponent{
 }
 
 bootstrapApplication(AppComponent, {
-  providers: [
+  providers: [provideHttpClient(),
     provideRouter(routes)  
   ]
 });

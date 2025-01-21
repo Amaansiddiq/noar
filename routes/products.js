@@ -2,11 +2,6 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../services/db');  
 
-const products = [...Array(100).keys()].map((_, index) => ({
-  product_id: index + 1,
-  product_name: `Product ${index + 1}`,
-  category_name: `Category ${((index % 5) + 1)}`,
-}));
 
 router.get('/', async (req, res) => {
   const page = parseInt(req.query.page) || 1; 
@@ -25,7 +20,6 @@ router.get('/', async (req, res) => {
 
     const [[{ count }]] = await connection.query('SELECT COUNT(*) AS count FROM products');
     const totalPages = Math.ceil(count / pageSize);
-    console.log(totalPages)
 
     res.json({
       products: results,
@@ -52,10 +46,6 @@ router.get('/count', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch product count' });
   }
 });
-
-
-
- 
 
 
 router.post('/', async (req, res) => {  
@@ -86,7 +76,7 @@ router.put('/:id', async (req, res) => {
   const query = 'UPDATE products SET product_name = ?, category_id = ? WHERE product_id = ?';
   try {
     await connection.query(query, [product_name, category_id, id]); 
-    res.sendStatus(200); 
+    res.status(200).json({ message: 'Product updated successfully' });
   } catch (err) {
     console.error('Error updating product:', err);
     res.status(500).json({ error: 'Failed to update product' });
