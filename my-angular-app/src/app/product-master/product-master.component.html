@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+  <h1 class="mb-4">Product Management</h1>
+
+  <h3>Add New Product</h3>
+    <form (ngSubmit)="onSubmit()" class="mb-4">
+      <div class="mb-3">
+        <label for="productName" class="form-label">Product Name</label>
+        <input id="productName" type="text" [(ngModel)]="newProduct.product_name" name="product_name" class="form-control" placeholder="Enter Product Name" required />
+      </div>
+      <div class="mb-3">
+        <label for="categoryDropdown" class="form-label">Category</label>
+        <select id="categoryDropdown" [(ngModel)]="newProduct.category_id" name="category_id" class="form-select" required>
+          <option *ngFor="let category of categories" [value]="category.category_id">{{ category.category_name }}</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Product</button>
+      <p *ngIf="productError" class="error">{{ productError }}</p>
+    </form>
+
+
+    <h3>Product List</h3>
+    <table id="productTable" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Product Name</th>
+          <th>Category Name</th>
+          <th>Category ID</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.product_id }}</td>
+          <td>{{ product.product_name }}</td>
+          <td>{{ product.categoryName || 'Unknown' }}</td>
+          <td>{{ product.category_id || 'Unknown' }}</td>
+          <td>
+            <button (click)="deleteProduct(product.product_id)" class="btn btn-danger btn-sm">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center mt-4">
+      <button *ngIf="currentPage > 1" class="btn btn-secondary" (click)="goToPage(currentPage - 1)">Previous</button>
+      <span class="mx-3">Page {{ currentPage }} of {{ getTotalPages() }}</span>
+      <button *ngIf="currentPage < getTotalPages()" class="btn btn-secondary" (click)="goToPage(currentPage + 1)">Next</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
