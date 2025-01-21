@@ -11,7 +11,7 @@ const categories = [
   ];
 
 // CRUD operations for categories
-router.get('/', async (req, res) => {  n
+router.get('/', async (req, res) => {  
     try {
         const [results] = await connection.query('SELECT * FROM categories');  
         res.json(results);
